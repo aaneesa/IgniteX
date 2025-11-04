@@ -8,7 +8,7 @@ import { generateToken } from "./jwt.js";
 
 const app = express();
 app.use(cors({
-    origin: ["http://localhost:3000", "https://ignite-x-five.vercel.app"],
+    origin: ["http://localhost:3000", "https://ignite-x-git-main-anwesha-adhikaris-projects.vercel.app"],
   methods: ["GET", "POST", "PUT", "DELETE"],
   credentials: true,
 }));
