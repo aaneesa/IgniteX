@@ -19,7 +19,7 @@ export default function SignupPage() {
       if (res.ok) {
         localStorage.setItem("token", data.token);
         setMessage("Signup successful");
-        setTimeout(() => router.push("/"), 200);
+        router.replace("/");
       } else {
         setMessage(data.message || "Signup failed");
       }
