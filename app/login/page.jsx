@@ -1,10 +1,12 @@
 "use client";
 import { useState } from "react";
+import { useRouter } from "next/navigation";
+import Link from "next/link";
 
 export default function LoginPage() {
   const [form, setForm] = useState({ email: "", password: "" });
   const [message, setMessage] = useState("");
-
+  const router = useRouter();
   const handleLogin = async (e) => {
     e.preventDefault();
     try {
@@ -13,13 +15,13 @@ export default function LoginPage() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(form),
       });
-
       const data = await res.json();
       if (res.ok) {
         localStorage.setItem("token", data.token);
-        setMessage("Login successful ✅");
+        setMessage("Login successful");
+        setTimeout(() => router.push("/"), 200);
       } else {
-        setMessage(data.message || "Login failed ❌");
+        setMessage(data.message || "Login failed");
       }
     } catch (err) {
       console.error(err);
@@ -28,9 +30,9 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="min-h-screen flex flex-col items-center justify-center bg-gray-50">
-      <form onSubmit={handleLogin} className="bg-white p-8 rounded shadow-md w-96">
-        <h2 className="text-2xl mb-4 font-semibold">Login</h2>
+    <div className="min-h-screen flex flex-col items-center justify-center bg-black-50">
+      <form onSubmit={handleLogin} className="bg-gray-600 border-2 p-8 rounded shadow-md w-96">
+        <h2 className="text-2xl mb-4 font-semibold flex justify-center items-center">Login</h2>
 
         <input
           type="email"
@@ -53,8 +55,9 @@ export default function LoginPage() {
         >
           Login
         </button>
-
+        <p>Don't have an account? <span className="text-amber-100"><Link href ='/signup'>Signup</Link></span></p>
         {message && <p className="text-center mt-3 text-sm">{message}</p>}
+
       </form>
     </div>
   );

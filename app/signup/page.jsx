@@ -1,10 +1,11 @@
 "use client";
 import { useState } from "react";
+import { useRouter } from "next/navigation";
 
 export default function SignupPage() {
   const [form, setForm] = useState({ username: "", email: "", password: "" });
   const [message, setMessage] = useState("");
-
+  const router = useRouter();
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
@@ -17,9 +18,10 @@ export default function SignupPage() {
       const data = await res.json();
       if (res.ok) {
         localStorage.setItem("token", data.token);
-        setMessage("Signup successful ✅");
+        setMessage("Signup successful");
+        setTimeout(() => router.push("/"), 200);
       } else {
-        setMessage(data.message || "Signup failed ❌");
+        setMessage(data.message || "Signup failed");
       }
     } catch (err) {
       console.error(err);
@@ -28,9 +30,9 @@ export default function SignupPage() {
   };
 
   return (
-    <div className="min-h-screen flex flex-col items-center justify-center bg-gray-50">
-      <form onSubmit={handleSubmit} className="bg-white p-8 rounded shadow-md w-96">
-        <h2 className="text-2xl mb-4 font-semibold">Signup</h2>
+    <div className="min-h-screen flex flex-col items-center justify-center bg-black-50">
+      <form onSubmit={handleSubmit} className="bg-gray-600 border-2 p-8 rounded shadow-md w-96">
+        <h2 className="text-2xl mb-4 font-semibold flex justify-center items-center">Signup</h2>
 
         <input
           type="text"
