@@ -1,11 +1,17 @@
 "use client";
-import { useState } from "react";
+import React, { useState } from "react";
 import { useRouter } from "next/navigation";
+import { useAuth } from "../context/AuthContext";
+import { Label } from "../components/ui/label";
+import { Input } from "../components/ui/input";
+import { cn } from "@/lib/utils";
 
 export default function SignupPage() {
   const [form, setForm] = useState({ username: "", email: "", password: "" });
   const [message, setMessage] = useState("");
   const router = useRouter();
+  const { login } = useAuth(); // <-- AuthContext login
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
@@ -17,8 +23,7 @@ export default function SignupPage() {
 
       const data = await res.json();
       if (res.ok) {
-        localStorage.setItem("token", data.token);
-        setMessage("Signup successful");
+        login(data.token); // <-- updates Auth globally immediately
         router.replace("/");
       } else {
         setMessage(data.message || "Signup failed");
@@ -30,41 +35,77 @@ export default function SignupPage() {
   };
 
   return (
-    <div className="min-h-screen flex flex-col items-center justify-center bg-black-50">
-      <form onSubmit={handleSubmit} className="bg-gray-600 border-2 p-8 rounded shadow-md w-96">
-        <h2 className="text-2xl mb-4 font-semibold flex justify-center items-center">Signup</h2>
+    <div className="min-h-screen flex items-center justify-center">
+      <div className="shadow-input w-full max-w-md rounded-none mt-20 bg-white p-4 md:rounded-2xl md:p-8 dark:bg-black">
+        <h2 className="text-xl font-bold text-neutral-800 dark:text-neutral-200">
+          Create Your Account
+        </h2>
+        <p className="mt-2 max-w-sm text-sm text-neutral-600 dark:text-neutral-300">
+          Join IgniteX
+        </p>
 
-        <input
-          type="text"
-          placeholder="Username"
-          className="w-full p-2 border mb-2 rounded"
-          value={form.username}
-          onChange={(e) => setForm({ ...form, username: e.target.value })}
-        />
-        <input
-          type="email"
-          placeholder="Email"
-          className="w-full p-2 border mb-2 rounded"
-          value={form.email}
-          onChange={(e) => setForm({ ...form, email: e.target.value })}
-        />
-        <input
-          type="password"
-          placeholder="Password"
-          className="w-full p-2 border mb-4 rounded"
-          value={form.password}
-          onChange={(e) => setForm({ ...form, password: e.target.value })}
-        />
+        <form className="my-8" onSubmit={handleSubmit}>
+          {/* Username */}
+          <LabelInputContainer className="mb-4">
+            <Label htmlFor="username">Username</Label>
+            <Input
+              id="username"
+              type="text"
+              placeholder="Your username"
+              value={form.username}
+              onChange={(e) => setForm({ ...form, username: e.target.value })}
+            />
+          </LabelInputContainer>
 
-        <button
-          type="submit"
-          className="w-full bg-black text-white py-2 rounded hover:bg-gray-800"
-        >
-          Sign Up
-        </button>
+          {/* Email */}
+          <LabelInputContainer className="mb-4">
+            <Label htmlFor="email">Email Address</Label>
+            <Input
+              id="email"
+              type="email"
+              placeholder="you@example.com"
+              value={form.email}
+              onChange={(e) => setForm({ ...form, email: e.target.value })}
+            />
+          </LabelInputContainer>
 
-        {message && <p className="text-center mt-3 text-sm">{message}</p>}
-      </form>
+          {/* Password */}
+          <LabelInputContainer className="mb-8">
+            <Label htmlFor="password">Password</Label>
+            <Input
+              id="password"
+              type="password"
+              placeholder="••••••••"
+              value={form.password}
+              onChange={(e) => setForm({ ...form, password: e.target.value })}
+            />
+          </LabelInputContainer>
+
+          {/* Submit Button */}
+          <button
+            className="group/btn relative block h-10 w-full rounded-md bg-linear-to-br from-black to-neutral-700 font-medium text-white shadow-[0px_1px_0px_0px_#ffffff40_inset,0px_-1px_0px_0px_#ffffff40_inset]"
+            type="submit"
+          >
+            Sign Up →
+            <BottomGradient />
+          </button>
+
+          {message && (
+            <p className="text-center mt-3 text-sm text-neutral-300">{message}</p>
+          )}
+        </form>
+      </div>
     </div>
   );
 }
+
+const BottomGradient = () => (
+  <>
+    <span className="absolute inset-x-0 -bottom-px block h-px w-full bg-linear-to-r from-transparent via-cyan-500 to-transparent opacity-0 transition duration-500 group-hover/btn:opacity-100" />
+    <span className="absolute inset-x-10 -bottom-px mx-auto block h-px w-1/2 bg-linear-to-r from-transparent via-indigo-500 to-transparent opacity-0 blur-sm transition duration-500 group-hover/btn:opacity-100" />
+  </>
+);
+
+const LabelInputContainer = ({ children, className }) => (
+  <div className={cn("flex w-full flex-col space-y-2", className)}>{children}</div>
+);

@@ -1,6 +1,7 @@
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
-import { FloatingNav } from "@/components/ui/floating-navbar";
+import { FloatingNav } from "@/app/components/ui/floating-navbar";
+import { AuthProvider } from "./context/AuthContext";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -28,8 +29,18 @@ export default function RootLayout({ children }) {
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
+        <AuthProvider>
         <FloatingNav navItems={navItems}/>
-        {children}
+        <main className="min-h-screen">{children}</main>
+        <footer className="py-8">
+          <div className="container mx-auto px-4 text-center text-gray-400">
+            <p>
+              Made with ❤️ by Anwesha
+            </p>
+            <p className="mt-2">© 2025 • All Rights Reserved</p>
+          </div>
+        </footer>
+        </AuthProvider>
       </body>
     </html>
   );
