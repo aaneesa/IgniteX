@@ -25,6 +25,7 @@ export default function LoginPage() {
       const data = await res.json();
 
       if (res.ok) {
+        document.cookie = `token=${data.token}; path=/; max-age=604800;`;
         login(data.token);  // <-- global login update
         router.replace("/");
       } else {

@@ -7,17 +7,20 @@ export const AuthProvider = ({ children }) => {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
 
   useEffect(() => {
-    const token = localStorage.getItem("token");
+    const token = document.cookie
+      .split("; ")
+      .find((row) => row.startsWith("token="))
+      ?.split("=")[1];
     setIsLoggedIn(!!token);
   }, []);
 
   const login = (token) => {
-    localStorage.setItem("token", token);
+    document.cookie = `token=${token}; path=/; max-age=604800;`;
     setIsLoggedIn(true);
   };
 
   const logout = () => {
-    localStorage.removeItem("token");
+    document.cookie = `token=; path=/; max-age=0;`;
     setIsLoggedIn(false);
   };
 

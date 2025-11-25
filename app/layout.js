@@ -1,7 +1,9 @@
 import { Geist, Geist_Mono } from "next/font/google";
+import Image from "next/image";
 import "./globals.css";
 import { FloatingNav } from "@/app/components/ui/floating-navbar";
 import { AuthProvider } from "./context/AuthContext";
+import Link from "next/link";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -19,9 +21,14 @@ export const metadata = {
 };
 const navItems = [
   { name: "Home", href: "/" },
-  { name: "Industry", href: "/industry" },
-  { name: "About", href: "/about" },
-  { name: "Resume", href: "/resume" },
+  { name: "Industry Insights", href: "/dashboard" },
+  { name: "Success Toolkit", 
+    dropdown: [
+      { label: "Resume Builder", href: "/resume-builder" },
+      { label: "Career Roadmaps", href: "/roadmaps" },
+      { label: "Interview Prep", href: "/interview" },
+    ]
+   },
 ]
 export default function RootLayout({ children }) {
   return (
@@ -30,6 +37,17 @@ export default function RootLayout({ children }) {
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
         <AuthProvider>
+          <Link href="/" className="flex items-center">
+          <Image
+            src="/logo.png"
+            alt="Logo"
+            width={105}
+            height={40}
+            className="object-contain ml-4 
+               w-20 sm:w-24 md:w-28 lg:w-28 
+               h-auto"
+          />
+        </Link>
         <FloatingNav navItems={navItems}/>
         <main className="min-h-screen">{children}</main>
         <footer className="py-8">
