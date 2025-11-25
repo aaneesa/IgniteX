@@ -23,7 +23,7 @@ export default function SignupPage() {
 
       const data = await res.json();
       if (res.ok) {
-        login(data.token); // <-- updates Auth globally immediately
+        login(data.token); 
         router.replace("/");
       } else {
         setMessage(data.message || "Signup failed");
@@ -36,7 +36,7 @@ export default function SignupPage() {
 
   return (
     <div className="min-h-screen flex items-center justify-center">
-      <div className="shadow-input w-full max-w-md rounded-none mt-20 bg-white p-4 md:rounded-2xl md:p-8 dark:bg-black">
+      <div className="shadow-input w-full max-w-md rounded-none bg-white p-4 md:rounded-2xl md:p-8 dark:bg-black">
         <h2 className="text-xl font-bold text-neutral-800 dark:text-neutral-200">
           Create Your Account
         </h2>
