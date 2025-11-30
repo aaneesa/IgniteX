@@ -1,4 +1,4 @@
-import prisma from "../prisma";
+import prisma from "../prisma/prisma.js";
 
 export async function updateOnboardingService(userId, data) {
   const user = await prisma.user.findUnique({

@@ -1,5 +1,5 @@
 import express from "express";
-import { authMiddleware } from "../middleware/authMiddleware.js";
+import { authenticate } from "../middleware/auth.js";
 import {
   updateOnboarding,
   getOnboardingStatus,
@@ -7,7 +7,7 @@ import {
 
 const router = express.Router();
 
-router.post("/update", authMiddleware, updateOnboarding);
-router.get("/status", authMiddleware, getOnboardingStatus);
+router.post("/update", authenticate, updateOnboarding);
+router.get("/status", authenticate, getOnboardingStatus);
 
 export default router;

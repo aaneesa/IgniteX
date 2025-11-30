@@ -1,4 +1,4 @@
-import prisma from "../prisma.js";
+import prisma from "../prisma/prisma.js";
 export const saveContactMessage = async ({name, email, message}) => {
   try {
     const newMessage = await prisma.contactMessage.create({
