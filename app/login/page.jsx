@@ -21,8 +21,6 @@ export default function LoginPage() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(form),
       });
-      const text = await res.text();
-      console.log("Server response:", text);
 
       const data = await res.json();
 

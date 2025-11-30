@@ -16,20 +16,29 @@ export default function SignupPage() {
     e.preventDefault();
     try {
       const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/auth/signup`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(form),
-      });
-      const text = await res.text();
-    console.log("Server response:", text);
+  method: "POST",
+  headers: { "Content-Type": "application/json" },
+  body: JSON.stringify(form),
+});
 
-      const data = await res.json();
-      if (res.ok) {
-        login(data.token); 
-        router.replace("/");
-      } else {
-        setMessage(data.message || "Signup failed");
-      }
+const text = await res.text();
+console.log("Server response:", text);
+
+let data;
+try {
+  data = JSON.parse(text);
+} catch {
+  console.error("Invalid JSON received from server");
+  setMessage("Server returned invalid response");
+  return;
+}
+
+if (res.ok) {
+  login(data.token);
+  router.replace("/");
+} else {
+  setMessage(data.message);
+}
     } catch (err) {
       console.error(err);
       setMessage("Server error");
