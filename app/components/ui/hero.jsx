@@ -10,18 +10,17 @@ const HeroSection = () => {
     <section className="w-full pt-36 md:pt-38 pb-10 mb-32">
       <div className="space-y-6 text-center">
         <div className="space-y-6 mx-auto">
-          <h1 className="text-5xl font-bold md:text-6xl lg:text-7xl xl:text-8xl gradient-title animate-gradient">
-            Your AI Career Coach for
+          <h1 className="text-4xl font-bold md:text-6xl lg:text-6xl xl:text-8xl gradient-title animate-gradient text-gray-300 ">
+            Intelligent Career Guidance for 
             <br />
-            Professional Success
+            a Future-Ready You
           </h1>
           <p className="mx-auto max-w-[600px] text-muted-foreground md:text-xl">
-            Advance your career with personalized guidance, interview prep, and
-            AI-powered tools for job success.
+            Boost your job readiness with curated career advice, targeted interview coaching, and AI-powered insights.
           </p>
         </div>
         <div className="flex justify-center space-x-4">
-          <Link href="/dashboard">
+          <Link href="/interview">
             <HoverBorderGradient size="lg" className="px-8">
               Get Started
             </HoverBorderGradient>

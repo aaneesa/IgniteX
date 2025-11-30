@@ -2,6 +2,7 @@ import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import { FloatingNav } from "@/app/components/ui/floating-navbar";
 import { AuthProvider } from "./context/AuthContext";
+import  Footer  from "./components/ui/footer";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -20,15 +21,15 @@ export const metadata = {
 
 const navItems = [
   { name: "Home", href: "/" },
-  { name: "Industry Insights", href: "/dashboard" },
   {
-    name: "Success Toolkit",
+    name: "Success Toolkits",
     dropdown: [
       { label: "Resume Builder", href: "/resume-builder" },
       { label: "Career Roadmaps", href: "/roadmaps" },
       { label: "Interview Prep", href: "/interview" },
     ],
   },
+  {name : 'Contact', href: '/contact' },
 ];
 
 export default function RootLayout({ children }) {
@@ -47,13 +48,7 @@ export default function RootLayout({ children }) {
           <FloatingNav navItems={navItems} />
 
           <main className="min-h-screen">{children}</main>
-
-          <footer className="py-8 ">
-            <div className="container mx-auto px-4 text-center text-gray-400">
-              <p>Made with ❤️ by Anwesha</p>
-              <p className="mt-2">© 2025 • All Rights Reserved</p>
-            </div>
-          </footer>
+          <Footer/>
         </AuthProvider>
       </body>
     </html>

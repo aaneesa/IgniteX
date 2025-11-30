@@ -16,17 +16,19 @@ export default function LoginPage() {
   const handleLogin = async (e) => {
     e.preventDefault();
     try {
-      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/login`, {
+      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/auth/login`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(form),
       });
+      const text = await res.text();
+      console.log("Server response:", text);
 
       const data = await res.json();
 
       if (res.ok) {
         document.cookie = `token=${data.token}; path=/; max-age=604800;`;
-        login(data.token);  // <-- global login update
+        login(data.token);  
         router.replace("/");
       } else {
         setMessage(data.message || "Login failed");
