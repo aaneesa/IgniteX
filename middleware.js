@@ -6,8 +6,9 @@ export function middleware(req) {
   const protectedRoutes = [
     "/dashboard",
     "/resume-builder",
-    "/roadmaps",
+    "/roadmap",
     "/interview",
+    "/onboarding"
   ];
 
   if (protectedRoutes.some((route) => req.nextUrl.pathname.startsWith(route))) {
@@ -22,8 +23,9 @@ export function middleware(req) {
 export const config = {
   matcher: [
     "/resume-builder/:path*",
-    "/roadmaps/:path*",
+    "/roadmap/:path*",
     "/interview/:path*",
     "/dashboard/:path*",
+    "/onboarding/:path*"
   ],
 };

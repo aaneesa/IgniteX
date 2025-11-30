@@ -25,7 +25,7 @@ const navItems = [
     name: "Success Toolkits",
     dropdown: [
       { label: "Resume Builder", href: "/resume-builder" },
-      { label: "Career Roadmaps", href: "/roadmaps" },
+      { label: "Career Roadmaps", href: "/roadmap" },
       { label: "Interview Prep", href: "/interview" },
     ],
   },

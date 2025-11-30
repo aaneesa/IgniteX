@@ -32,10 +32,10 @@ export default function ContactForm() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-black p-6">
+    <div className="h-screen flex items-center justify-center bg-muted/50">
       <form
         onSubmit={handleSubmit}
-        className="w-full max-w-lg bg-neutral-900 p-8 rounded-xl shadow-lg border border-neutral-700"
+        className="w-full max-w-md bg-neutral-900 p-8 rounded-xl shadow-lg border border-neutral-700"
       >
         <h2 className="text-3xl font-semibold text-white mb-6">
           Contact Us

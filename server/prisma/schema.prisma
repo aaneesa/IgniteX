@@ -14,9 +14,13 @@ model User {
   password  String
   industry      String?
   createdAt DateTime @default(now())
+  bio           String?
+  experience    Int? 
+  skills       String[]
   resume    Resume? 
   plans     LearningPlan[]
   assessments   Assessment[]
+  isOnboarded Boolean  @default(false)
 }
 model LearningPlan {
   id        Int      @id @default(autoincrement())
