@@ -20,7 +20,7 @@ const HeroSection = () => {
           </p>
         </div>
         <div className="flex justify-center space-x-4">
-          <Link href="/interview">
+          <Link href="/roadmap">
             <HoverBorderGradient size="lg" className="px-8">
               Get Started
             </HoverBorderGradient>

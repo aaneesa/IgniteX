@@ -57,7 +57,7 @@ export default function Roadmap() {
   }, [router]);
 
   if (loading)
-    return <p className="text-center mt-10 text-gray-500 text-lg">Loading...</p>;
+    return <p className="text-center mt-10 text-gray-500 text-lg">Generating the perfect plan for you...</p>;
   if (error)
     return (
       <p className="text-center mt-10 text-red-500 text-lg">Error: {error}</p>
@@ -65,7 +65,7 @@ export default function Roadmap() {
 
   return (
     <div className="max-w-6xl mx-auto px-4 py-8">
-      <h1 className="text-3xl font-bold text-center mb-8 text-blue-800">
+      <h1 className="text-3xl font-bold text-center mb-8 text-gray-300">
         Your Roadmap for {plan.role}
       </h1>
 
@@ -73,9 +73,9 @@ export default function Roadmap() {
         {plan.weeks.map((week) => (
           <div
             key={week.week}
-            className="bg-white shadow-lg rounded-xl p-6 hover:shadow-2xl transition-shadow duration-300"
+            className="bg-gray-300 shadow-lg rounded-xl p-6 hover:shadow-2xl transition-shadow duration-300"
           >
-            <h2 className="text-xl font-semibold text-indigo-700 mb-3">
+            <h2 className="text-xl font-semibold text-black mb-3">
               Week {week.week}: {week.title}
             </h2>
 
