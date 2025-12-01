@@ -41,10 +41,10 @@ With smart, personalized support, IgniteX turns your goals into real outcomes.
                 </li>
                 <li>
                   <Link
-                    href="/dashboard"
+                    href="/roadmap"
                     className="hover:text-white flex items-center"
                   >
-                    <span className="mr-2 text-white">›</span>Industry Insights
+                    <span className="mr-2 text-white">›</span>Learning Plan
                   </Link>
                 </li>
               </ul>
