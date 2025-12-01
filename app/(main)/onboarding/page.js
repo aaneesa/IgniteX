@@ -2,15 +2,17 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import { industries } from "@/data/industries";
 
 export default function OnboardingPage() {
   const router = useRouter();
 
   const [form, setForm] = useState({
     industry: "",
+    subIndustry: "",
     experience: "",
     bio: "",
-    skills: "",
+    skills: [],
   });
 
   const [message, setMessage] = useState("");
@@ -28,6 +30,14 @@ export default function OnboardingPage() {
       return;
     }
 
+    // 🔥 FINAL FORMAT STORED
+    const finalIndustry = `${form.industry} - ${form.subIndustry}`;
+
+    const payload = {
+      ...form,
+      industry: finalIndustry,
+    };
+
     try {
       const res = await fetch(
         `${process.env.NEXT_PUBLIC_API_URL}/api/onboarding/update`,
@@ -37,7 +47,7 @@ export default function OnboardingPage() {
             "Content-Type": "application/json",
             Authorization: `Bearer ${token}`,
           },
-          body: JSON.stringify(form),
+          body: JSON.stringify(payload),
         }
       );
 
@@ -52,6 +62,11 @@ export default function OnboardingPage() {
       setMessage("Server error");
     }
   };
+
+  // get selected industry info
+  const selectedIndustry = industries.find(
+    (i) => i.name === form.industry
+  );
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-neutral-950 px-4">
@@ -70,26 +85,58 @@ export default function OnboardingPage() {
           {/* Industry */}
           <div>
             <label className="text-gray-300 text-sm">Industry</label>
-            <input
-              type="text"
-              placeholder="e.g., Web Development, AI, Marketing"
-              className="w-full mt-1 p-3 bg-neutral-800 border border-neutral-700 rounded-lg text-white placeholder-gray-500 focus:ring-2 focus:ring-white focus:outline-none"
+            <select
+              className="w-full mt-1 p-3 bg-neutral-800 border border-neutral-700 rounded-lg text-white"
+              value={form.industry}
               onChange={(e) =>
-                setForm({ ...form, industry: e.target.value })
+                setForm({
+                  ...form,
+                  industry: e.target.value,
+                  subIndustry: "", 
+                })
               }
               required
-            />
+            >
+              <option value="">Select Industry</option>
+              {industries.map((ind) => (
+                <option key={ind.id} value={ind.name}>
+                  {ind.name}
+                </option>
+              ))}
+            </select>
           </div>
+
+          {/* Subindustry */}
+          {form.industry && (
+            <div>
+              <label className="text-gray-300 text-sm">Specialization</label>
+              <select
+                className="w-full mt-1 p-3 bg-neutral-800 border border-neutral-700 rounded-lg text-white"
+                value={form.subIndustry}
+                onChange={(e) =>
+                  setForm({ ...form, subIndustry: e.target.value })
+                }
+                required
+              >
+                <option value="">Select Specialization</option>
+                {selectedIndustry?.subIndustries.map((sub) => (
+                  <option key={sub} value={sub}>
+                    {sub}
+                  </option>
+                ))}
+              </select>
+            </div>
+          )}
 
           {/* Experience */}
           <div>
             <label className="text-gray-300 text-sm">Experience</label>
             <input
-              type="text"
-              placeholder="e.g., Beginner, 1 year, 3 years"
-              className="w-full mt-1 p-3 bg-neutral-800 border border-neutral-700 rounded-lg text-white placeholder-gray-500 focus:ring-2 focus:ring-white focus:outline-none"
+              type="number"
+              placeholder="e.g., 0, 1, 3"
+              className="w-full mt-1 p-3 bg-neutral-800 border border-neutral-700 rounded-lg text-white"
               onChange={(e) =>
-                setForm({ ...form, experience: e.target.value })
+                setForm({ ...form, experience: parseInt(e.target.value) })
               }
               required
             />
@@ -99,9 +146,8 @@ export default function OnboardingPage() {
           <div>
             <label className="text-gray-300 text-sm">Bio</label>
             <textarea
-              placeholder="Tell us about your goals, background, or interests..."
               rows="4"
-              className="w-full mt-1 p-3 bg-neutral-800 border border-neutral-700 rounded-lg text-white placeholder-gray-500 focus:ring-2 focus:ring-white focus:outline-none resize-none"
+              className="w-full mt-1 p-3 bg-neutral-800 border border-neutral-700 rounded-lg text-white resize-none"
               onChange={(e) =>
                 setForm({ ...form, bio: e.target.value })
               }
@@ -115,9 +161,12 @@ export default function OnboardingPage() {
             <input
               type="text"
               placeholder="e.g., JavaScript, UI/UX, Python"
-              className="w-full mt-1 p-3 bg-neutral-800 border border-neutral-700 rounded-lg text-white placeholder-gray-500 focus:ring-2 focus:ring-white focus:outline-none"
+              className="w-full mt-1 p-3 bg-neutral-800 border border-neutral-700 rounded-lg text-white"
               onChange={(e) =>
-                setForm({ ...form, skills: e.target.value })
+                setForm({
+                  ...form,
+                  skills: e.target.value.split(",").map((s) => s.trim()),
+                })
               }
               required
             />

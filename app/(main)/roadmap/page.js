@@ -29,6 +29,7 @@ export default function Roadmap() {
         );
 
         if (!res.ok) throw new Error("Failed to fetch status");
+        console.log("Response:", res);
 
         const data = await res.json();
 

@@ -5,7 +5,7 @@ import {
 
 export const updateOnboarding = async (req, res) => {
   try {
-    const userId = req.userId; // from middleware
+    const userId = req.user.id;; // from middleware
     const data = req.body;
 
     const updatedUser = await updateOnboardingService(userId, data);
@@ -21,7 +21,7 @@ export const updateOnboarding = async (req, res) => {
 
 export const getOnboardingStatus = async (req, res) => {
   try {
-    const userId = req.userId;
+    const userId = req.user.id;
 
     const status = await getOnboardingStatusService(userId);
 
