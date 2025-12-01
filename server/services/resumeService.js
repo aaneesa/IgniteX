@@ -1,5 +1,4 @@
 import prisma from "../prisma/prisma.js";
-import fetch from "node-fetch";
 
 const GEMINI_URL =
   "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent";
