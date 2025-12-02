@@ -1,19 +1,22 @@
 import express from "express";
 import {
-  createOrUpdateResumeController,
-  getResumeController,      
+  createResumeController,
+  getResumeController,
+  updateResumeController,
   deleteResumeController,
-  improveResumeController
+  improveResumeController,
 } from "../controllers/resumeController.js";
 
 import { authenticate } from "../middleware/auth.js";
 
 const router = express.Router();
+
 router.use(authenticate);
-router.post("/", createOrUpdateResumeController);
-router.get("/", getResumeController); 
-router.put("/", createOrUpdateResumeController); 
-router.delete("/", deleteResumeController); 
-router.post("/improve", improveResumeController);
+
+router.post("/", createResumeController);       
+router.get("/", getResumeController);         
+router.put("/", updateResumeController);        
+router.delete("/", deleteResumeController);    
+router.post("/improve", improveResumeController); 
 
 export default router;
