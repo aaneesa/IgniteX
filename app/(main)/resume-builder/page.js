@@ -1,16 +1,19 @@
 "use client";
 import { useState, useEffect } from "react";
+import PrimaryButton from "@/app/components/ui/primaryButton";
+import jsPDF from "jspdf";
+import html2canvas from "html2canvas";
 
 export default function ResumeBuilderPage() {
   const [resume, setResume] = useState(null);
   const [form, setForm] = useState({
-  bio: "",
-  experience: [],
-  skills: [],
-  education: [],
-  projects: [],
-  contactInfo: { email: "", linkedin: "", github: "", leetcode: "", codeforces: "" },
-});
+    bio: "",
+    experience: [],
+    skills: [],
+    education: [],
+    projects: [],
+    contactInfo: { email: "", linkedin: "", github: "", leetcode: "", codeforces: "" },
+  });
 
   const [message, setMessage] = useState("");
   const [loading, setLoading] = useState(false);
@@ -18,47 +21,47 @@ export default function ResumeBuilderPage() {
   const getToken = () =>
     document.cookie.split("; ").find((c) => c.startsWith("token="))?.split("=")[1];
 
-useEffect(() => {
-  const fetchResume = async () => {
-  const token = getToken();
-  if (!token) return;
+  useEffect(() => {
+    const fetchResume = async () => {
+      const token = getToken();
+      if (!token) return;
 
-  try {
-    const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/resume/`, {
-      method: "GET",
-      headers: { Authorization: `Bearer ${token}` },
-    });
-    const data = await res.json();
-    if (data.success && data.resume) {
-      setResume(data.resume);
+      try {
+        const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/resume/`, {
+          method: "GET",
+          headers: { Authorization: `Bearer ${token}` },
+        });
+        const data = await res.json();
 
-      const content = JSON.parse(data.resume.content);
+        if (data.success && data.resume) {
+          setResume(data.resume);
 
-setForm({
-  bio: content.bio || content.summary || "", 
-  experience: content.experience || [],
-  skills: Array.isArray(content.skills) 
-         ? content.skills 
-         : content.skills?.split(",").filter(Boolean) || [],
-  education: content.education || [],
-  projects: content.projects || [],
-  contactInfo: content.contactInfo || {
-    email: "",
-    linkedin: "",
-    github: "",
-    leetcode: "",
-    codeforces: "",
-  },
-});
-    }
-  } catch (err) {
-    console.error(err);
-  }
-};
+          const content = JSON.parse(data.resume.content);
 
-  fetchResume();
-}, []);
+          setForm({
+            bio: content.bio || content.summary || "",
+            experience: content.experience || [],
+            skills: Array.isArray(content.skills)
+              ? content.skills
+              : content.skills?.split(",").filter(Boolean) || [],
+            education: content.education || [],
+            projects: content.projects || [],
+            contactInfo: content.contactInfo || {
+              email: "",
+              linkedin: "",
+              github: "",
+              leetcode: "",
+              codeforces: "",
+            },
+          });
+        }
+      } catch (err) {
+        console.error(err);
+      }
+    };
 
+    fetchResume();
+  }, []);
 
   const handleChange = (e, field, index = null, subField = null) => {
     if (index !== null) {
@@ -84,12 +87,15 @@ setForm({
     try {
       const url = `${process.env.NEXT_PUBLIC_API_URL}/api/resume/`;
       const method = resume ? "PUT" : "POST";
+
       const res = await fetch(url, {
         method,
         headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
         body: JSON.stringify({ content: form }),
       });
+
       const data = await res.json();
+
       if (data.success) {
         setMessage("Resume saved successfully!");
         setResume(data.resume);
@@ -114,7 +120,14 @@ setForm({
       if (data.success) {
         setMessage("Resume deleted");
         setResume(null);
-        setForm({ bio: "", experience: [], skills: [], contactInfo: { email: "", linkedin: "", github: "", leetcode: "", codeforces: "" } });
+        setForm({
+          bio: "",
+          experience: [],
+          skills: [],
+          education: [],
+          projects: [],
+          contactInfo: { email: "", linkedin: "", github: "", leetcode: "", codeforces: "" },
+        });
       } else setMessage(data.error || "Error deleting resume");
     } catch (err) {
       console.error(err);
@@ -133,6 +146,7 @@ setForm({
         body: JSON.stringify({ current: form[type], type }),
       });
       const data = await res.json();
+
       if (data.success) setForm({ ...form, [type]: data.improved });
       else setMessage(data.error || "Error improving resume");
     } catch (err) {
@@ -141,62 +155,199 @@ setForm({
     }
   };
 
+  // ===== PDF Download Function (Professional White Layout) =====
+  const downloadPDF = async () => {
+    const element = document.getElementById("resume-preview");
+    if (!element) return;
+
+    const canvas = await html2canvas(element, {
+      scale: 2,
+      useCORS: true,
+      backgroundColor: "#ffffff", // white background for PDF
+    });
+
+    const imgData = canvas.toDataURL("image/png");
+    const pdf = new jsPDF("p", "mm", "a4");
+    const imgWidth = 210;
+    const pageHeight = 297;
+    const imgHeight = (canvas.height * imgWidth) / canvas.width;
+
+    let heightLeft = imgHeight;
+    let position = 0;
+
+    pdf.addImage(imgData, "PNG", 0, position, imgWidth, imgHeight);
+    heightLeft -= pageHeight;
+
+    while (heightLeft > 0) {
+      position = heightLeft - imgHeight;
+      pdf.addPage();
+      pdf.addImage(imgData, "PNG", 0, position, imgWidth, imgHeight);
+      heightLeft -= pageHeight;
+    }
+
+    pdf.save("resume.pdf");
+  };
+
   return (
     <div className="min-h-screen bg-neutral-950 p-8 flex justify-center">
       <div className="w-full max-w-3xl bg-neutral-900 p-8 rounded-xl border border-neutral-800">
-        <h1 className="text-3xl font-bold text-white mb-4">Resume Builder</h1>
-        {message && <p className="text-red-400 mb-4">{message}</p>}
+        <h1 className="text-3xl font-bold text-gray-400 text-center mb-4">Resume Generator</h1>
 
-        {/* Bio */}
-        <div className="mb-4">
-          <label className="text-white font-semibold">Bio</label>
-          <textarea
-            className="w-full p-3 bg-neutral-800 rounded-lg text-white"
-            value={form.bio}
-            onChange={(e) => handleChange(e, "bio")}
-          />
-          <button onClick={() => handleImprove("bio")} className="mt-2 px-4 py-2 bg-white text-black rounded-lg hover:bg-gray-200">Improve Bio</button>
+        {message && <p className="text-green-400 mb-4">{message}</p>}
+
+        {/* ===== Resume Preview Section for PDF ===== */}
+        <div
+          id="resume-preview"
+          className="p-8 rounded-lg"
+          style={{
+            backgroundColor: "#ffffff",
+            color: "#000000",
+            fontFamily: "Arial, sans-serif",
+            lineHeight: 1.5,
+          }}
+        >
+          {/* Bio */}
+          {form.bio && (
+            <div className="mb-6">
+              <h2 style={{ fontSize: "18px", fontWeight: "bold", marginBottom: "4px" }}>Summary</h2>
+              <p style={{ marginBottom: "8px" }}>{form.bio}</p>
+            </div>
+          )}
+
+          {/* Experience */}
+          {form.experience.length > 0 && (
+            <div className="mb-6">
+              <h2 style={{ fontSize: "18px", fontWeight: "bold", marginBottom: "4px" }}>Experience</h2>
+              <ul style={{ marginLeft: "16px", marginBottom: "8px" }}>
+                {form.experience.map((exp, i) => (
+                  <li key={i} style={{ marginBottom: "4px" }}>{exp}</li>
+                ))}
+              </ul>
+            </div>
+          )}
+
+          {/* Skills */}
+          {form.skills.length > 0 && (
+            <div className="mb-6">
+              <h2 style={{ fontSize: "18px", fontWeight: "bold", marginBottom: "4px" }}>Skills</h2>
+              <ul style={{ marginLeft: "16px", marginBottom: "8px" }}>
+                {form.skills.map((skill, i) => (
+                  <li key={i} style={{ marginBottom: "4px" }}>{skill}</li>
+                ))}
+              </ul>
+            </div>
+          )}
+
+          {/* Education */}
+          {form.education.length > 0 && (
+            <div className="mb-6">
+              <h2 style={{ fontSize: "18px", fontWeight: "bold", marginBottom: "4px" }}>Education</h2>
+              <ul style={{ marginLeft: "16px", marginBottom: "8px" }}>
+                {form.education.map((edu, i) => (
+                  <li key={i} style={{ marginBottom: "4px" }}>{edu}</li>
+                ))}
+              </ul>
+            </div>
+          )}
+
+          {/* Projects */}
+          {form.projects.length > 0 && (
+            <div className="mb-6">
+              <h2 style={{ fontSize: "18px", fontWeight: "bold", marginBottom: "4px" }}>Projects</h2>
+              <ul style={{ marginLeft: "16px", marginBottom: "8px" }}>
+                {form.projects.map((p, i) => (
+                  <li key={i} style={{ marginBottom: "4px" }}>{p}</li>
+                ))}
+              </ul>
+            </div>
+          )}
+
+          {/* Contact Info */}
+          <div className="mb-6">
+            <h2 style={{ fontSize: "18px", fontWeight: "bold", marginBottom: "4px" }}>Contact Info</h2>
+            <ul style={{ marginLeft: "16px" }}>
+              {Object.entries(form.contactInfo).map(([key, value]) => (
+                <li key={key} style={{ marginBottom: "4px" }}>
+                  <strong>{key.charAt(0).toUpperCase() + key.slice(1)}:</strong> {value}
+                </li>
+              ))}
+            </ul>
+          </div>
         </div>
 
-        {/* Experience */}
-        <div className="mb-4">
-          <label className="text-white font-semibold">Experience</label>
-          {form.experience.map((exp, i) => (
-            <input key={i} className="w-full mb-2 p-2 bg-neutral-800 rounded-lg text-white" value={exp} onChange={(e) => handleChange(e, "experience", i)} />
-          ))}
-          <button onClick={() => handleAddField("experience")} className="mt-2 px-4 py-2 bg-white text-black rounded-lg hover:bg-gray-200">Add Experience</button>
-        </div>
+        <div className="mt-6">
+          <div className="mb-4">
+            <label className="font-semibold text-gray-300">Bio</label>
+            <textarea
+              className="w-full p-3 mt-1 bg-neutral-800 rounded-lg text-white"
+              value={form.bio}
+              onChange={(e) => handleChange(e, "bio")}
+            />
+            <div className="mt-2">
+              <PrimaryButton onClick={() => handleImprove("bio")} className="text-green-300!">Improve Bio</PrimaryButton>
+            </div>
+          </div>
+          <div className="mb-4">
+            <label className="font-semibold text-gray-300">Experience</label>
+            {form.experience.map((exp, i) => (
+              <input
+                key={i}
+                className="w-full mt-2 p-2 bg-neutral-800 rounded-lg text-white"
+                value={exp}
+                onChange={(e) => handleChange(e, "experience", i)}
+              />
+            ))}
+            <div className="mt-2">
+              <PrimaryButton onClick={() => handleAddField("experience")} className="text-green-300!">Add Experience</PrimaryButton>
+            </div>
+          </div>
 
-        {/* Skills */}
-        <div className="mb-4">
-          <label className="text-white font-semibold">Skills</label>
-          {form.skills.map((skill, i) => (
-            <input key={i} className="w-full mb-2 p-2 bg-neutral-800 rounded-lg text-white" value={skill} onChange={(e) => handleChange(e, "skills", i)} />
-          ))}
-          <button onClick={() => handleAddField("skills")} className="mt-2 px-4 py-2 bg-white text-black rounded-lg hover:bg-gray-200">Add Skill</button>
-        </div>
+          <div className="mb-4">
+            <label className="font-semibold text-gray-300">Skills</label>
+            {form.skills.map((skill, i) => (
+              <input
+                key={i}
+                className="w-full mt-2 p-2 bg-neutral-800 rounded-lg text-white"
+                value={skill}
+                onChange={(e) => handleChange(e, "skills", i)}
+              />
+            ))}
+            <div className="mt-2">
+              <PrimaryButton onClick={() => handleAddField("skills")} className="text-green-300!">Add Skill</PrimaryButton>
+            </div>
+          </div>
 
-        {/* Contact Info */}
-        {/* Contact Info */}
-<div className="mb-4">
-  <label className="text-white font-semibold">Contact Info</label>
-  {["email", "linkedin", "github", "leetcode", "codeforces"].map((field) => (
-    <input
-      key={field}
-      type={field === "email" ? "email" : "text"}
-      placeholder={field}
-      value={form.contactInfo?.[field] || ""} // <-- safe fallback
-      onChange={(e) => handleChange(e, "contactInfo", null, field)}
-      className="w-full mb-2 p-2 bg-neutral-800 rounded-lg text-white"
-    />
-  ))}
-</div>
+          <div className="mb-4">
+            <label className="font-semibold text-gray-300">Contact Info</label>
+            {["email", "linkedin", "github", "leetcode", "codeforces"].map((field) => (
+              <input
+                key={field}
+                type={field === "email" ? "email" : "text"}
+                placeholder={field}
+                value={form.contactInfo?.[field] || ""}
+                onChange={(e) => handleChange(e, "contactInfo", null, field)}
+                className="w-full mt-2 p-2 bg-neutral-800 rounded-lg text-white"
+              />
+            ))}
+          </div>
 
+          <div className="flex gap-4 mt-4 flex-wrap">
+            <PrimaryButton onClick={handleSubmit} disabled={loading} className="text-green-300!">
+              {resume ? "Update Resume" : "Create Resume"}
+            </PrimaryButton>
 
-        {/* Buttons */}
-        <div className="flex gap-4 mt-6">
-          <button onClick={handleSubmit} disabled={loading} className="px-6 py-3 bg-white text-black rounded-lg hover:bg-gray-200">{resume ? "Update Resume" : "Create Resume"}</button>
-          {resume && <button onClick={handleDelete} className="px-6 py-3 bg-red-600 text-white rounded-lg hover:bg-red-700">Delete</button>}
+            {resume && (
+              <button
+                onClick={handleDelete}
+                className="px-6 py-3 bg-black text-red-400 rounded-full hover:bg-red-700"
+              >
+                Delete
+              </button>
+            )}
+
+            {/* Download PDF Button */}
+            <PrimaryButton onClick={downloadPDF} className="text-green-300!">Download Resume as PDF</PrimaryButton>
+          </div>
         </div>
       </div>
     </div>
