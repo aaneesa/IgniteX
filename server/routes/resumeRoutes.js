@@ -1,8 +1,7 @@
 import express from "express";
 import {
   createResumeController,
-  getAllResumesController,
-  getResumeController,
+  getResumeController,      
   updateResumeController,
   deleteResumeController,
   improveResumeController
@@ -11,15 +10,11 @@ import {
 import { authenticate } from "../middleware/auth.js";
 
 const router = express.Router();
-
 router.use(authenticate);
-
 router.post("/", createResumeController);
-router.get("/", getAllResumesController);
-router.get("/:id", getResumeController);
-router.put("/:id", updateResumeController);
-router.delete("/:id", deleteResumeController);
-
+router.get("/", getResumeController); 
+router.put("/", updateResumeController); 
+router.delete("/", deleteResumeController); 
 router.post("/improve", improveResumeController);
 
 export default router;
