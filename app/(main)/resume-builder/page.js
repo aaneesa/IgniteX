@@ -4,11 +4,14 @@ import { useState, useEffect } from "react";
 export default function ResumeBuilderPage() {
   const [resume, setResume] = useState(null);
   const [form, setForm] = useState({
-    bio: "",
-    experience: [],
-    skills: [],
-    contactInfo: { email: "", linkedin: "", github: "", leetcode: "", codeforces: "" },
-  });
+  bio: "",
+  experience: [],
+  skills: [],
+  education: [],
+  projects: [],
+  contactInfo: { email: "", linkedin: "", github: "", leetcode: "", codeforces: "" },
+});
+
   const [message, setMessage] = useState("");
   const [loading, setLoading] = useState(false);
 
@@ -31,20 +34,22 @@ useEffect(() => {
 
       const content = JSON.parse(data.resume.content);
 
-      setForm({
-        bio: content.summary || "",
-        experience: content.experience || [],
-        skills: content.skills ? content.skills.split(",").filter(Boolean) : [],
-        contactInfo: content.contactInfo || {
-          email: "",
-          linkedin: "",
-          github: "",
-          leetcode: "",
-          codeforces: "",
-        },
-        education: content.education || [],
-        projects: content.projects || [],
-      });
+setForm({
+  bio: content.bio || content.summary || "", 
+  experience: content.experience || [],
+  skills: Array.isArray(content.skills) 
+         ? content.skills 
+         : content.skills?.split(",").filter(Boolean) || [],
+  education: content.education || [],
+  projects: content.projects || [],
+  contactInfo: content.contactInfo || {
+    email: "",
+    linkedin: "",
+    github: "",
+    leetcode: "",
+    codeforces: "",
+  },
+});
     }
   } catch (err) {
     console.error(err);
