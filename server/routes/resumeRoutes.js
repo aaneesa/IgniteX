@@ -10,7 +10,7 @@ import { authenticate } from "../middleware/auth.js";
 
 const router = express.Router();
 router.use(authenticate);
-router.post("/", createOrUpdateResumeControllerr);
+router.post("/", createOrUpdateResumeController);
 router.get("/", getResumeController); 
 router.put("/", createOrUpdateResumeController); 
 router.delete("/", deleteResumeController); 
