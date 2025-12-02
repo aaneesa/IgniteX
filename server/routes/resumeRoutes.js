@@ -1,8 +1,7 @@
 import express from "express";
 import {
-  createResumeController,
+  createOrUpdateResumeController,
   getResumeController,      
-  updateResumeController,
   deleteResumeController,
   improveResumeController
 } from "../controllers/resumeController.js";
@@ -11,9 +10,9 @@ import { authenticate } from "../middleware/auth.js";
 
 const router = express.Router();
 router.use(authenticate);
-router.post("/", createResumeController);
+router.post("/", createOrUpdateResumeControllerr);
 router.get("/", getResumeController); 
-router.put("/", updateResumeController); 
+router.put("/", createOrUpdateResumeController); 
 router.delete("/", deleteResumeController); 
 router.post("/improve", improveResumeController);
 
