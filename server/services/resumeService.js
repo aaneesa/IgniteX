@@ -3,6 +3,7 @@ import prisma from "../prisma/prisma.js";
 const GEMINI_URL =
   "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent";
 
+// AI Resume Improvement
 export const improveResumeAI = async (userId, current, type) => {
   const user = await prisma.user.findUnique({ where: { id: userId } });
   if (!user) throw new Error("User not found");
@@ -43,6 +44,7 @@ Requirements:
   return aiText.trim();
 };
 
+// Create resume
 export const createResume = async (userId, content) => {
   const resume = await prisma.resume.create({
     data: {
@@ -54,6 +56,7 @@ export const createResume = async (userId, content) => {
   return resume;
 };
 
+// Get all resumes
 export const getAllResumes = async ({ page = 1, limit = 10, search = "", sort = "createdAt" }) => {
   const skip = (page - 1) * limit;
 
@@ -73,23 +76,26 @@ export const getAllResumes = async ({ page = 1, limit = 10, search = "", sort = 
   return { resumes, total };
 };
 
+// Get resume by ID
 export const getResumeById = async (resumeId) => {
   const resume = await prisma.resume.findUnique({
-    where: { id: resumeId },
+    where: { id: resumeId.toString() },
   });
 
   if (!resume) throw new Error("Resume not found");
   return resume;
 };
 
+// Update resume
 export const updateResume = async (resumeId, content) => {
   return await prisma.resume.update({
-    where: { id: resumeId },
+    where: { id: resumeId.toString() },
     data: { content: JSON.stringify(content) },
   });
 };
 
+// Delete resume
 export const deleteResume = async (resumeId) => {
-  await prisma.resume.delete({ where: { id: resumeId } });
+  await prisma.resume.delete({ where: { id: resumeId.toString() } });
   return true;
 };
