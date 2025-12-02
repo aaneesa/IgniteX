@@ -109,9 +109,9 @@ export default function InterviewPrepPage() {
     try {
       const token = getToken();
       const payload = Object.keys(answers).map(qId => ({
-        qId: Number(qId),
-        selectedOption: answers[qId]
-      }));
+  qId: Number(qId),
+  selectedIndex: answers[qId] 
+}));
       const res = await fetch(`${API}/api/assessments/${selected.id}/attempt`, {
         method: "POST",
         headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
