@@ -15,26 +15,45 @@ export default function ResumeBuilderPage() {
   const getToken = () =>
     document.cookie.split("; ").find((c) => c.startsWith("token="))?.split("=")[1];
 
-  useEffect(() => {
-    const fetchResume = async () => {
-      const token = getToken();
-      if (!token) return;
+useEffect(() => {
+  const fetchResume = async () => {
+  const token = getToken();
+  if (!token) return;
 
-      try {
-        const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/resume/`, {
-          headers: { Authorization: `Bearer ${token}` },
-        });
-        const data = await res.json();
-        if (data.success && data.resume) {
-          setResume(data.resume);
-          setForm(JSON.parse(data.resume.content));
-        }
-      } catch (err) {
-        console.error(err);
-      }
-    };
-    fetchResume();
-  }, []);
+  try {
+    const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/resume/`, {
+      method: "GET",
+      headers: { Authorization: `Bearer ${token}` },
+    });
+    const data = await res.json();
+    if (data.success && data.resume) {
+      setResume(data.resume);
+
+      const content = JSON.parse(data.resume.content);
+
+      setForm({
+        bio: content.summary || "",
+        experience: content.experience || [],
+        skills: content.skills ? content.skills.split(",").filter(Boolean) : [],
+        contactInfo: content.contactInfo || {
+          email: "",
+          linkedin: "",
+          github: "",
+          leetcode: "",
+          codeforces: "",
+        },
+        education: content.education || [],
+        projects: content.projects || [],
+      });
+    }
+  } catch (err) {
+    console.error(err);
+  }
+};
+
+  fetchResume();
+}, []);
+
 
   const handleChange = (e, field, index = null, subField = null) => {
     if (index !== null) {
@@ -153,12 +172,21 @@ export default function ResumeBuilderPage() {
         </div>
 
         {/* Contact Info */}
-        <div className="mb-4">
-          <label className="text-white font-semibold">Contact Info</label>
-          {["email", "linkedin", "github", "leetcode", "codeforces"].map((field) => (
-            <input key={field} type={field === "email" ? "email" : "text"} placeholder={field} value={form.contactInfo[field]} onChange={(e) => handleChange(e, "contactInfo", null, field)} className="w-full mb-2 p-2 bg-neutral-800 rounded-lg text-white" />
-          ))}
-        </div>
+        {/* Contact Info */}
+<div className="mb-4">
+  <label className="text-white font-semibold">Contact Info</label>
+  {["email", "linkedin", "github", "leetcode", "codeforces"].map((field) => (
+    <input
+      key={field}
+      type={field === "email" ? "email" : "text"}
+      placeholder={field}
+      value={form.contactInfo?.[field] || ""} // <-- safe fallback
+      onChange={(e) => handleChange(e, "contactInfo", null, field)}
+      className="w-full mb-2 p-2 bg-neutral-800 rounded-lg text-white"
+    />
+  ))}
+</div>
+
 
         {/* Buttons */}
         <div className="flex gap-4 mt-6">
